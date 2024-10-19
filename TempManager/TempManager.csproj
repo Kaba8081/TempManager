@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <PackageReference Include="ClickableTransparentOverlay" Version="11.0.1" />
+    <PackageReference Include="Coroutine" Version="2.1.5" />
     <PackageReference Include="ImGui.NET" Version="1.91.0.1" />
     <PackageReference Include="LibreHardwareMonitorLib" Version="0.9.3" />
   </ItemGroup>

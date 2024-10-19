@@ -1,23 +1,25 @@
 ﻿namespace TempManager
 {
+    using System.Runtime.CompilerServices;
     using System.Threading.Tasks;
     class Program
     {
-        static Task RetrieveHardware()
+        private static MonitorManager _monitorManager = null!;
+
+        private static Task InitializeHardware()
         {
-            MonitorManager monitorManager = new MonitorManager();
-            monitorManager.Monitor();
+            _monitorManager = new MonitorManager();
             
             return Task.CompletedTask;
         }
         static async Task RunOverlay()
         {
-            using var overlay = new TempManagerOverlay();
+            using var overlay = new TempManagerOverlay(_monitorManager);
             await overlay.Run();
         }
         static async Task Main()
-        {
-            await RetrieveHardware();
+        {   
+            await InitializeHardware();
             await RunOverlay();
         }
     }
