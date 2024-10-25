@@ -9,7 +9,7 @@
         private static Task InitializeHardware()
         {
             _monitorManager = new MonitorManager();
-            
+
             return Task.CompletedTask;
         }
         static async Task RunOverlay()
@@ -18,7 +18,7 @@
             await overlay.Run();
         }
         static async Task Main()
-        {   
+        {
             await InitializeHardware();
             await RunOverlay();
         }

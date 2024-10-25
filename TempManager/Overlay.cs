@@ -27,6 +27,8 @@ namespace TempManager
         }
         private IEnumerable<Wait> UpdateHardware()
         {
+            // TODO: Update only visible hardware
+            // ? maybe send a list of visible hardware to the coroutine
             Console.WriteLine("Starting Hardware Update Coroutine");
             while (this._isRunning)
             {
@@ -36,24 +38,36 @@ namespace TempManager
 
         }
 
-        private void RenderHardware() 
+        private void RenderHardware()
         {
             foreach (var hardware in _monitorManager.GetHardware())
             {
+                // TODO: Render hardware using ImGui.TreeNode()
                 if (ImGui.CollapsingHeader(hardware.Name))
                 {
-                    foreach(var sensor in hardware.Sensors)
+                    var hardwareSensors = _monitorManager.GetSensors(hardware);
+
+                    foreach (var sensorType in hardwareSensors.Keys)
                     {
-                        ImGui.Text($"{sensor.SensorType} - {sensor.Name}: {sensor.Value.ToString()}");
+                        if (hardwareSensors[sensorType].Count <= 0) { continue; }
+
+                        if (ImGui.TreeNode(sensorType.ToString())) 
+                        {
+                            foreach (var sensor in hardwareSensors[sensorType])
+                            {
+                                ImGui.Text($"{sensorType} - {sensor.Name}: {sensor.Value.ToString()}");
+                            }
+                            ImGui.TreePop();
+                        }
                     }
-                }
+                }      
             }
         }
 
         protected override void Render()
         {
             CoroutineHandler.Tick(ImGui.GetIO().DeltaTime);
-            
+
             ImGui.Begin("TempManager", ref _isRunning, ImGuiWindowFlags.AlwaysAutoResize);
             ImGui.Text("Hello, world!");
             ImGui.NewLine();
@@ -62,7 +76,7 @@ namespace TempManager
             ImGui.Text("This will one day be a usefull resource manager.");
             ImGui.End();
 
-            if(!_isRunning)
+            if (!_isRunning)
             {
                 Close();
             }

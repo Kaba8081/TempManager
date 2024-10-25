@@ -20,20 +20,20 @@ namespace TempManager
     {
         private readonly Computer _computer;
         private IList<IHardware> _activeHardware = new List<IHardware>();
-        
+
         public MonitorManager()
         {
-            _computer = new Computer 
-            { 
-                IsCpuEnabled = true, 
-                IsGpuEnabled = true, 
-                IsMemoryEnabled = true, 
-                IsMotherboardEnabled = true, 
-                IsControllerEnabled = true, 
-                IsNetworkEnabled = true, 
-                IsStorageEnabled = true 
+            _computer = new Computer
+            {
+                IsCpuEnabled = true,
+                IsGpuEnabled = true,
+                IsMemoryEnabled = true,
+                IsMotherboardEnabled = true,
+                IsControllerEnabled = true,
+                IsNetworkEnabled = true,
+                IsStorageEnabled = true
             };
-            
+
             lock (_computer)
             {
                 _computer.Open();
@@ -44,7 +44,7 @@ namespace TempManager
         public MonitorManager(ISettings settings)
         {
             _computer = new Computer(settings);
-            
+
             _computer.Open();
             _computer.Accept(new UpdateVisitor());
 
@@ -62,6 +62,19 @@ namespace TempManager
 
             await Task.CompletedTask;
         }
+
+        public Dictionary<SensorType, List<ISensor>> GetSensors(IHardware hardware) 
+        {
+            var sensor_dict = new Dictionary<SensorType, List<ISensor>>();
+
+            foreach (var key in Enum.GetValues(typeof(SensorType)))
+            {
+                var sensors = hardware.Sensors.Where(s => s.SensorType == (SensorType)key);
+                sensor_dict.Add((SensorType)key, sensors.ToList());
+            }
+
+            return sensor_dict;
+        }
         public IList<IHardware> GetHardware()
         {
             return _activeHardware;
@@ -72,11 +85,11 @@ namespace TempManager
             foreach (IHardware hardware in _computer.Hardware)
             {
                 Console.WriteLine("Hardware: {0}", hardware.Name);
-                
+
                 foreach (IHardware subhardware in hardware.SubHardware)
                 {
                     Console.WriteLine("\tSubhardware: {0}", subhardware.Name);
-                    
+
                     foreach (ISensor sensor in subhardware.Sensors)
                     {
                         Console.WriteLine("\t\tSensor: {0}, value: {1}", sensor.Name, sensor.Value);
