@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Domain.Entities;
-
-namespace TempManagerOverlay
+﻿namespace TempManagerOverlay
 {
+    using Domain.Entities;
     using System.Collections.Generic;
     using ClickableTransparentOverlay;
     using ImGuiNET;
@@ -56,7 +50,7 @@ namespace TempManagerOverlay
                         {
                             foreach (var sensor in hardwareSensors[sensorType])
                             {
-                                ImGui.Text($"{sensorType} - {sensor.Name}: {sensor.Value.ToString()}");
+                                ImGui.Text($"{sensorType} - {sensor.Name}: {sensor.Value?.ToString("F2")}");
                             }
                             ImGui.TreePop();
                         }

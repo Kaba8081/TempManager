@@ -1,14 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using LibreHardwareMonitor.Hardware;
-using System.Collections;
-using System.Runtime;
-
-namespace Domain.Entities
+﻿namespace Domain.Entities
 {
+    using LibreHardwareMonitor.Hardware;
 
     public class UpdateVisitor : IVisitor
     {

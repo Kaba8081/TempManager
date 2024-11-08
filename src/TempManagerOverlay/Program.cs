@@ -1,9 +1,7 @@
-﻿using Domain.Entities;
-
-namespace TempManagerOverlay
+﻿namespace TempManagerOverlay
 {
-    using System.Runtime.CompilerServices;
     using System.Threading.Tasks;
+    using Domain.Entities;
     class Program
     {
         private static MonitorManager _monitorManager = null!;
