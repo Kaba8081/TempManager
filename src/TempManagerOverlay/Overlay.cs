@@ -1,11 +1,10 @@
-﻿namespace TempManagerOverlay
+﻿using Domain.Entities;
+using ClickableTransparentOverlay;
+using ImGuiNET;
+using Coroutine;
+
+namespace TempManagerOverlay
 {
-    using Domain.Entities;
-    using System.Collections.Generic;
-    using ClickableTransparentOverlay;
-    using ImGuiNET;
-    using System;
-    using Coroutine;
 
     internal class TempManagerOverlay : Overlay
     {
@@ -13,7 +12,6 @@
         private readonly ActiveCoroutine _monitorUpdateCoroutine;
         private bool _isRunning = true;
         private readonly int _hardwareUpdateDelay = 5;
-
 
         public TempManagerOverlay(MonitorManager manager) : base("TempManagerOverlay", true, 3840, 2160)
         {

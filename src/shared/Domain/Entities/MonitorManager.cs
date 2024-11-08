@@ -1,7 +1,7 @@
-﻿namespace Domain.Entities
-{
-    using LibreHardwareMonitor.Hardware;
+﻿using LibreHardwareMonitor.Hardware;
 
+namespace Domain.Entities
+{
     public class UpdateVisitor : IVisitor
     {
         public void VisitComputer(IComputer computer)
@@ -78,30 +78,6 @@
         public IList<IHardware> GetHardware()
         {
             return _activeHardware;
-        }
-        public void Monitor()
-        {
-
-            foreach (IHardware hardware in _computer.Hardware)
-            {
-                Console.WriteLine("Hardware: {0}", hardware.Name);
-
-                foreach (IHardware subhardware in hardware.SubHardware)
-                {
-                    Console.WriteLine("\tSubhardware: {0}", subhardware.Name);
-
-                    foreach (ISensor sensor in subhardware.Sensors)
-                    {
-                        Console.WriteLine("\t\tSensor: {0}, value: {1}", sensor.Name, sensor.Value);
-                    }
-                }
-
-                var sensors = hardware.Sensors.OrderBy(s => s.SensorType).ToList();
-                foreach (ISensor sensor in sensors)
-                {
-                    Console.WriteLine("\tSensor: {0}, type: {1}, value: {2}", sensor.Name, sensor.SensorType, sensor.Value);
-                }
-            }
         }
     }
 }

@@ -1,10 +1,11 @@
-﻿namespace TempManagerOverlay
+﻿using Domain.Entities;
+
+namespace TempManagerOverlay
 {
-    using System.Threading.Tasks;
-    using Domain.Entities;
     class Program
     {
         private static MonitorManager _monitorManager = null!;
+        private static TempManagerOverlay _overlayManager = null!;
 
         private static Task InitializeHardware()
         {
@@ -14,8 +15,8 @@
         }
         static async Task RunOverlay()
         {
-            using var overlay = new TempManagerOverlay(_monitorManager);
-            await overlay.Run();
+            _overlayManager = new TempManagerOverlay(_monitorManager);
+            await _overlayManager.Run();
         }
         static async Task Main()
         {
