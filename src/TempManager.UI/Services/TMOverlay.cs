@@ -1,7 +1,9 @@
-﻿using ImGuiNET;
-using ClickableTransparentOverlay;
+﻿using TempManager.Shared.Utilities;
 using TempManager.Core.Services;
+using ImGuiNET;
+using ClickableTransparentOverlay;
 using Coroutine;
+
 
 namespace TempManager.UI.Services
 {
@@ -38,7 +40,7 @@ namespace TempManager.UI.Services
         }
         private IEnumerable<Wait> UpdateHardware()
         {
-            Console.WriteLine("Starting UpdateHardware coroutine");
+            Log.Info("UpdateHardware coroutine started");
             while (this._isRunning)
             {
                 this._hardwareService.Update().Wait();
