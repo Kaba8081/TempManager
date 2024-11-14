@@ -1,7 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <OutputType>Exe</OutputType>
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
@@ -14,7 +13,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\shared\Domain\Domain.csproj" />
+    <ProjectReference Include="..\TempManager.Core\TempManager.Core.csproj" />
+    <ProjectReference Include="..\TempManager.Shared\TempManager.Shared.csproj" />
   </ItemGroup>
 
 </Project>
