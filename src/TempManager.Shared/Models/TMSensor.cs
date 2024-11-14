@@ -1,4 +1,5 @@
 ﻿using LibreHardwareMonitor.Hardware;
+using TempManager.Shared.Utilities;
 
 namespace TempManager.Shared.Models
 {
@@ -6,7 +7,7 @@ namespace TempManager.Shared.Models
     {
         private ISensor _sensor;
         public string Name { get; set; }
-        public SensorType SensorType { get; set; }
+        public TMSensorType SensorType { get; set; }
         public double? Value { get; set; }
         public string HardwareName { get; set; }
 
@@ -14,7 +15,7 @@ namespace TempManager.Shared.Models
         {
             _sensor = sensor;
             Name = sensor.Name;
-            SensorType = sensor.SensorType;
+            SensorType = SensorTypeMapper.ToTMSensorType(sensor.SensorType);
             Value = sensor.Value;
             HardwareName = sensor.Hardware.Name;
         }

@@ -1,7 +1,7 @@
 ﻿using LibreHardwareMonitor.Hardware;
 using TempManager.Shared.Models;
 
-namespace TempManager.Core.Services
+namespace TempManager.Core.Interfaces
 {
     public interface IHardwareService
     {

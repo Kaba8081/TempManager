@@ -1,4 +1,5 @@
 ﻿using LibreHardwareMonitor.Hardware;
+using TempManager.Core.Interfaces;
 using TempManager.Shared.Models;
 
 namespace TempManager.Core.Services
@@ -50,14 +51,14 @@ namespace TempManager.Core.Services
             return hardwareList;
         }
 
-        public Dictionary<SensorType, List<TMSensor>> GetGroupedSensors(TMHardware hardware) 
+        public Dictionary<TMSensorType, List<TMSensor>> GetGroupedSensors(TMHardware hardware) 
         {
-            var sensorDictionary = new Dictionary<SensorType, List<TMSensor>>();
+            var sensorDictionary = new Dictionary<TMSensorType, List<TMSensor>>();
 
             foreach (var key in Enum.GetValues(typeof(SensorType))) 
             {
-                var sensors = hardware.Sensors.Where(s => s.SensorType == (SensorType)key);
-                sensorDictionary.Add((SensorType)key, sensors.ToList());
+                var sensors = hardware.Sensors.Where(s => s.SensorType == (TMSensorType)key);
+                sensorDictionary.Add((TMSensorType)key, sensors.ToList());
             }
 
             return sensorDictionary;

@@ -1,4 +1,5 @@
 ﻿using TempManager.Shared.Utilities;
+using TempManager.Shared.Models;
 using TempManager.Core.Services;
 using ImGuiNET;
 using ClickableTransparentOverlay;
@@ -11,7 +12,7 @@ namespace TempManager.UI.Services
     {
         private readonly HardwareService _hardwareService;
         private readonly ActiveCoroutine _monitorUpdateCoroutine;
-        private readonly int _hardwareUpdateDelay = 5;
+        private readonly double _hardwareUpdateDelay = 0.5;
         private bool _isRunning = true;
 
         public TMOverlay() : base("TempManager", true, 3840, 2160)
@@ -27,16 +28,20 @@ namespace TempManager.UI.Services
         protected override void Render()
         {
             CoroutineHandler.Tick(ImGui.GetIO().DeltaTime);
-            ImGui.Begin("TempManager - Hardware and Sensors", ref _isRunning, ImGuiWindowFlags.AlwaysAutoResize);
+            bool isCollapsed = !ImGui.Begin("TempManager - Hardware and Sensors", ref _isRunning, ImGuiWindowFlags.AlwaysAutoResize);
+
+            if (!_isRunning || isCollapsed)
+            {
+                ImGui.End();
+                if (! _isRunning) Close();
+
+                return;
+            }
 
             RenderHardware();
 
             ImGui.End();
 
-            if (!_isRunning)
-            {
-                Close();
-            }
         }
         private IEnumerable<Wait> UpdateHardware()
         {
@@ -55,21 +60,23 @@ namespace TempManager.UI.Services
                 // TODO: Render hardware using ImGui.TreeNode()
                 if (ImGui.CollapsingHeader(hardware.Name))
                     {
-                    var GroupedSensorsDictionary = _hardwareService.GetGroupedSensors(hardware);
+                    RenderSensors(_hardwareService.GetGroupedSensors(hardware));
+                }
+            }
+        }
+        private void RenderSensors(Dictionary<TMSensorType, List<TMSensor>> groupedSensors)
+        {
+            foreach (var sensorType in groupedSensors.Keys)
+            {
+                if (groupedSensors[sensorType].Count <= 0) { continue; }
 
-                    foreach (var sensorType in GroupedSensorsDictionary.Keys)
+                if (ImGui.TreeNode(sensorType.ToString()))
+                {
+                    foreach (var sensor in groupedSensors[sensorType])
                     {
-                        if (GroupedSensorsDictionary[sensorType].Count <= 0) { continue; }
-
-                        if (ImGui.TreeNode(sensorType.ToString()))
-                        {
-                            foreach (var sensor in GroupedSensorsDictionary[sensorType])
-                            {
-                                ImGui.Text($"{sensorType} - {sensor.Name}: {sensor.Value?.ToString("F2")}");
-                            }
-                            ImGui.TreePop();
-                        }
+                        ImGui.Text($"{sensorType} - {sensor.Name}: {sensor.Value?.ToString("F2")}");
                     }
+                    ImGui.TreePop();
                 }
             }
         }
