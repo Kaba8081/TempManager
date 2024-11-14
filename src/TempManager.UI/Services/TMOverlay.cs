@@ -1,16 +1,19 @@
 ﻿using TempManager.Shared.Utilities;
-using TempManager.Shared.Models;
 using TempManager.Core.Services;
+using TempManager.UI.Utilities;
 using ImGuiNET;
 using ClickableTransparentOverlay;
 using Coroutine;
-
+using System.Numerics;
 
 namespace TempManager.UI.Services
 {
     public class TMOverlay: Overlay
     {
         private readonly HardwareService _hardwareService;
+        private readonly MainRenderer _mainRenderer = new MainRenderer();
+        private readonly SelectableRenderer _selectableRenderer = new SelectableRenderer();
+
         private readonly ActiveCoroutine _monitorUpdateCoroutine;
         private readonly double _hardwareUpdateDelay = 0.5;
         private bool _isRunning = true;
@@ -28,7 +31,13 @@ namespace TempManager.UI.Services
         protected override void Render()
         {
             CoroutineHandler.Tick(ImGui.GetIO().DeltaTime);
-            bool isCollapsed = !ImGui.Begin("TempManager - Hardware and Sensors", ref _isRunning, ImGuiWindowFlags.AlwaysAutoResize);
+            ImGui.SetNextWindowSizeConstraints(new Vector2(400, 200), new Vector2(1920, 1080));
+            bool isCollapsed = !ImGui.Begin(
+                "TempManager - Hardware and Sensors", 
+                ref _isRunning,
+                ImGuiWindowFlags.AlwaysAutoResize |
+                ImGuiWindowFlags.AlwaysVerticalScrollbar
+                );
 
             if (!_isRunning || isCollapsed)
             {
@@ -38,7 +47,12 @@ namespace TempManager.UI.Services
                 return;
             }
 
-            RenderHardware();
+            _mainRenderer.RenderHardware(_hardwareService);
+
+            if (_mainRenderer.selectedValues.Count > 0)
+            {
+                _selectableRenderer.Render(_mainRenderer.selectedValues);
+            }
 
             ImGui.End();
 
@@ -50,34 +64,6 @@ namespace TempManager.UI.Services
             {
                 this._hardwareService.Update().Wait();
                 yield return new Wait(this._hardwareUpdateDelay);
-            }
-        }
-
-        private void RenderHardware()
-        {
-            foreach (var hardware in _hardwareService.GetHardwareComponents())
-            {
-                // TODO: Render hardware using ImGui.TreeNode()
-                if (ImGui.CollapsingHeader(hardware.Name))
-                    {
-                    RenderSensors(_hardwareService.GetGroupedSensors(hardware));
-                }
-            }
-        }
-        private void RenderSensors(Dictionary<TMSensorType, List<TMSensor>> groupedSensors)
-        {
-            foreach (var sensorType in groupedSensors.Keys)
-            {
-                if (groupedSensors[sensorType].Count <= 0) { continue; }
-
-                if (ImGui.TreeNode(sensorType.ToString()))
-                {
-                    foreach (var sensor in groupedSensors[sensorType])
-                    {
-                        ImGui.Text($"{sensorType} - {sensor.Name}: {sensor.Value?.ToString("F2")}");
-                    }
-                    ImGui.TreePop();
-                }
             }
         }
     }

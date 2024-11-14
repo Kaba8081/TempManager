@@ -1,5 +1,4 @@
-﻿
-namespace TempManager.Shared.Models
+﻿namespace TempManager.Shared.Models
 {
     public enum TMSensorType
     {

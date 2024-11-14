@@ -1,6 +1,6 @@
-﻿using LibreHardwareMonitor.Hardware;
+﻿using TempManager.Shared.Models;
 using TempManager.Core.Interfaces;
-using TempManager.Shared.Models;
+using LibreHardwareMonitor.Hardware;
 
 namespace TempManager.Core.Services
 {

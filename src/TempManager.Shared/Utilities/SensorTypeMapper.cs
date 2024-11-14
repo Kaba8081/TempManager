@@ -1,8 +1,5 @@
 ﻿using LibreHardwareMonitor.Hardware;
-using System.Numerics;
-using System.Reflection.Emit;
 using TempManager.Shared.Models;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace TempManager.Shared.Utilities
 {

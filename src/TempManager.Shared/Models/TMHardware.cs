@@ -1,5 +1,4 @@
-﻿
-using LibreHardwareMonitor.Hardware;
+﻿using LibreHardwareMonitor.Hardware;
 
 namespace TempManager.Shared.Models
 {

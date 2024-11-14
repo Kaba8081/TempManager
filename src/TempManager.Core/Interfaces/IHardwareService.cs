@@ -1,5 +1,4 @@
-﻿using LibreHardwareMonitor.Hardware;
-using TempManager.Shared.Models;
+﻿using TempManager.Shared.Models;
 
 namespace TempManager.Core.Interfaces
 {
