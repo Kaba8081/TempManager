@@ -8,12 +8,68 @@ namespace TempManager.UI.Utilities
     public class MainRenderer
     {
         public Dictionary<string, List<TMSensor>> selectedValues { get; set; }
+        public Dictionary<TMSensor, LinePlotRenderer> plottedSensors { get; set; }
 
         public MainRenderer()
         {
             selectedValues = new Dictionary<string, List<TMSensor>>();
+            plottedSensors = new Dictionary<TMSensor, LinePlotRenderer>();
         }
+        private void UpdateSelectedSensors(string svIndex, TMSensor sensor)
+        {
+            if (selectedValues.ContainsKey(svIndex)
+                && selectedValues[svIndex].Contains(sensor))
+            {
+                selectedValues[svIndex].Remove(sensor);
 
+                if (selectedValues[svIndex].Count <= 0)
+                    selectedValues.Remove(svIndex);
+            }
+            else
+            {
+                if (selectedValues.ContainsKey(svIndex)) 
+                    selectedValues[svIndex].Add(sensor);
+                else 
+                    selectedValues.Add(svIndex, new List<TMSensor> { sensor });
+            }
+        }
+        private void RenderSensorContextMenu(TMSensor sensor)
+        {
+            if (ImGui.BeginPopupContextItem($"SensorContextMenu###{sensor.Name}"))
+            {
+                var _svIndex = $"{sensor.HardwareName} - {sensor.SensorType}";
+                // Render context menu items
+
+                // Select sensor
+                if (ImGui.Selectable("Select"))
+                {
+                    UpdateSelectedSensors(_svIndex, sensor);
+                }
+
+                // Plot sensor
+                if  (ImGui.Selectable("Plot"))
+                {
+                    // If sensor isn't selected, add it to selectedValues
+                    if (!selectedValues.ContainsKey(_svIndex) || !selectedValues[_svIndex].Contains(sensor))
+                    {
+                        UpdateSelectedSensors(_svIndex, sensor);
+                    }
+                    
+                    // Add / remove sensor from plottedSensors
+                    if (plottedSensors.ContainsKey(sensor))
+                        plottedSensors.Remove(sensor);
+                    else
+                        plottedSensors.Add(sensor, new LinePlotRenderer(sensor));
+                }
+
+                // Close context menu
+                if (ImGui.Button("Close"))
+                {
+                    ImGui.CloseCurrentPopup();
+                }
+                ImGui.EndPopup();
+            }
+        }
         public void RenderHardware(HardwareService hardwareService)
         {
             foreach (var hardware in hardwareService.GetHardwareComponents())
@@ -62,13 +118,14 @@ namespace TempManager.UI.Utilities
 
             // Update selectedValues with clicked node
             if (clickedNode.Count <= 0) return;
-            
+
             foreach (var node in clickedNode)
             {
                 if (selectedValues.ContainsKey(node.Key))
-                {     
+                {
                     selectedValues.Remove(node.Key);
-                } else selectedValues.Add(node.Key, node.Value);
+                }
+                else selectedValues.Add(node.Key, node.Value);
             }
         }
         public void RenderSensors(List<TMSensor> sensors)
@@ -76,6 +133,7 @@ namespace TempManager.UI.Utilities
             foreach (var sensor in sensors)
             {
                 ImGui.Text($"{sensor.Name}: {sensor.Value?.ToString("F2")}");
+                RenderSensorContextMenu(sensor);
             }
             ImGui.TreePop();
         }

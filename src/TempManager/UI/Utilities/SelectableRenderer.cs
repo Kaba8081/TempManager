@@ -7,7 +7,7 @@ namespace TempManager.UI.Utilities
     {
         public bool isCollapsed { get; set; } = true;
 
-        public void Render(Dictionary<string, List<TMSensor>> selectedValues)
+        public void Render(Dictionary<string, List<TMSensor>> selectedValues, Dictionary<TMSensor, LinePlotRenderer> plottedSensors)
         {
             ImGui.SetNextWindowBgAlpha(0.7f);
             ImGui.Begin(
@@ -17,14 +17,22 @@ namespace TempManager.UI.Utilities
                 ImGuiWindowFlags.NoDocking
                 );
 
-            foreach (var key in selectedValues.Keys)
+            foreach (string key in selectedValues.Keys)
             {
                 bool isOpen = ImGui.TreeNode($"{key}");
                 if (!isOpen) continue;
 
-                foreach (var sensor in selectedValues[key])
+                foreach (TMSensor sensor in selectedValues[key])
                 {
-                    ImGui.Text($"{sensor.Name} - {sensor.Value?.ToString("F2")}");
+                    string _label = $"{sensor.Name} - {sensor.Value?.ToString("F2")}";
+                    if (plottedSensors.ContainsKey(sensor))
+                    {
+                        plottedSensors[sensor].Render(_label);
+                    }
+                    else
+                    {
+                        ImGui.Text(_label);
+                    }
                 }
                 ImGui.TreePop();
             }

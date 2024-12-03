@@ -50,7 +50,7 @@ namespace TempManager.UI.Services
 
             if (_mainRenderer.selectedValues.Count > 0)
             {
-                _selectableRenderer.Render(_mainRenderer.selectedValues);
+                _selectableRenderer.Render(_mainRenderer.selectedValues, _mainRenderer.plottedSensors);
             }
 
             ImGui.End();
