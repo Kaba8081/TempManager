@@ -1,5 +1,5 @@
 ﻿using ImGuiNET;
-using Shared.Domain.Models;
+using Domain.Models;
 using TempManager.Core.Services;
 using Logger.Utilities;
 
@@ -37,7 +37,7 @@ namespace TempManager.UI.Utilities
 
             foreach (var sensorType in groupedSensors.Keys)
             {
-                if (groupedSensors[sensorType].Count <= 0) { continue; }
+                if (groupedSensors[sensorType].Count <= 0) continue;
 
                 ImGuiTreeNodeFlags nodeFlags = baseFlags;
                 string hardwareName = groupedSensors[sensorType][0].HardwareName;
@@ -61,19 +61,14 @@ namespace TempManager.UI.Utilities
             }
 
             // Update selectedValues with clicked node
-            if (clickedNode.Count > 0)
+            if (clickedNode.Count <= 0) return;
+            
+            foreach (var node in clickedNode)
             {
-                foreach (var node in clickedNode)
-                {
-                    if (selectedValues.ContainsKey(node.Key))
-                    {
-                        selectedValues.Remove(node.Key);
-                    }
-                    else
-                    {
-                        selectedValues.Add(node.Key, node.Value);
-                    }
-                }
+                if (selectedValues.ContainsKey(node.Key))
+                {     
+                    selectedValues.Remove(node.Key);
+                } else selectedValues.Add(node.Key, node.Value);
             }
         }
         public void RenderSensors(List<TMSensor> sensors)

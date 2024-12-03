@@ -1,7 +1,7 @@
 ﻿using LibreHardwareMonitor.Hardware;
-using Shared.Domain.Models;
+using Domain.Models;
 
-namespace Shared.Domain.Utilities
+namespace Domain.Utilities
 {
     public static class SensorTypeMapper
     {

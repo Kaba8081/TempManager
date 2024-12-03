@@ -1,4 +1,4 @@
-﻿namespace Shared.Domain.Models
+﻿namespace Domain.Models
 {
     public enum TMSensorType
     {

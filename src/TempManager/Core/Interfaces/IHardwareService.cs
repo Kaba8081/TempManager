@@ -1,4 +1,4 @@
-﻿using Shared.Domain.Models;
+﻿using Domain.Models;
 
 namespace TempManager.Core.Interfaces
 {

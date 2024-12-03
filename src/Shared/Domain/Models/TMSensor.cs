@@ -1,7 +1,7 @@
-﻿using Shared.Domain.Utilities;
+﻿using Domain.Utilities;
 using LibreHardwareMonitor.Hardware;
 
-namespace Shared.Domain.Models
+namespace Domain.Models
 {
     public class TMSensor
     {

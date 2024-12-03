@@ -39,11 +39,10 @@ namespace TempManager.UI.Services
                 ImGuiWindowFlags.AlwaysVerticalScrollbar
                 );
 
-            if (!_isRunning || isCollapsed)
+            if (!_isRunning)
             {
                 ImGui.End();
-                if (!_isRunning) Close();
-
+                Close();
                 return;
             }
 

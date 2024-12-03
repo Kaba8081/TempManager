@@ -1,5 +1,5 @@
 ﻿using ImGuiNET;
-using Shared.Domain.Models;
+using Domain.Models;
 
 namespace TempManager.UI.Utilities
 {

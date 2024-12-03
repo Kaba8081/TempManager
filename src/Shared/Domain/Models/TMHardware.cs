@@ -1,6 +1,6 @@
 ﻿using LibreHardwareMonitor.Hardware;
 
-namespace Shared.Domain.Models
+namespace Domain.Models
 {
     public class TMHardware
     {
