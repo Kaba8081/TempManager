@@ -12,7 +12,8 @@ namespace TempManager.UI.Utilities
         private List<float> _sensorData;
         private List<float> _smoothedSensorData;
 
-        static int _valuesCount = 300;
+        // Add to config
+        static int _valuesCount = 100;
         static double _refreshTime = 0.5;
         static Vector2 _plotSize = new Vector2(0, 50);
 
@@ -55,15 +56,13 @@ namespace TempManager.UI.Utilities
 
         public void Render(string? label = "Sensor data plot")
         {
-            {
-                double avg = 0.0;
-                foreach (float value in _smoothedSensorData)
-                    avg += value;
-                if (_smoothedSensorData.Count > 0)
-                    avg /= _smoothedSensorData.Count;
-                var sensorDataArray = _smoothedSensorData.ToArray();
-                ImGui.PlotLines(label, ref sensorDataArray[0], _smoothedSensorData.Count, 0, null, _smoothedSensorData.Min(), _smoothedSensorData.Max(), _plotSize);
-            }
+            double avg = 0.0;
+            foreach (float value in _smoothedSensorData)
+                avg += value;
+            if (_smoothedSensorData.Count > 0)
+                avg /= _smoothedSensorData.Count;
+            var sensorDataArray = _smoothedSensorData.ToArray();
+            ImGui.PlotLines(label, ref sensorDataArray[0], _smoothedSensorData.Count, 0, null, _smoothedSensorData.Min(), _smoothedSensorData.Max(), _plotSize);
         }
     }
 }
