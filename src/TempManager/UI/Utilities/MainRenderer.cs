@@ -1,14 +1,28 @@
 ﻿using ImGuiNET;
 using Domain.Models;
-using TempManager.Core.Services;
+using TempManager.Core.Interfaces;
 using Logger.Utilities;
+using Notifier.Utilities;
 
 namespace TempManager.UI.Utilities
 {
     public class MainRenderer
     {
-        public Dictionary<string, List<TMSensor>> selectedValues { get; set; }
+        private Dictionary<string, List<TMSensor>> _selectedValues;
+
         public Dictionary<TMSensor, LinePlotRenderer> plottedSensors { get; set; }
+        public Dictionary<string, List<TMSensor>> selectedValues
+        {
+            get => _selectedValues;
+            set
+            {
+                if (_selectedValues != value)
+                {
+                    _selectedValues = value;
+                    Notify.TriggerEvent("SelectedSensorsChanges");
+                }
+            }
+        }
 
         public MainRenderer()
         {
@@ -70,7 +84,7 @@ namespace TempManager.UI.Utilities
                 ImGui.EndPopup();
             }
         }
-        public void RenderHardware(HardwareService hardwareService)
+        public void RenderHardware(IHardwareService hardwareService)
         {
             foreach (var hardware in hardwareService.GetHardwareComponents())
             {
@@ -108,7 +122,7 @@ namespace TempManager.UI.Utilities
 
                 if (ImGui.IsItemClicked() && !ImGui.IsItemToggledOpen())
                 {
-                    Log.Info($"Clicked on {hardwareName} - {sensorType}");
+                    Log.Debug($"Clicked on {hardwareName} - {sensorType}");
                     clickedNode[$"{hardwareName} - {sensorType}"] = groupedSensors[sensorType];
                 }
 

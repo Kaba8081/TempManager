@@ -4,6 +4,14 @@ namespace Logger.Services
 {
     public class CustomLogger : ICustomLogger
     {
+        public void Debug(string message) 
+        {
+            Console.Write("[");
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.Write("DEBUG");
+            Console.ResetColor();
+            Console.WriteLine($"] {DateTime.Now}: {message}");
+        }
         public void Info(string message)
         {
             Console.Write("[");

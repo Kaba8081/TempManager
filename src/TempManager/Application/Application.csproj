@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Logger\Logger.csproj" />
+    <ProjectReference Include="..\..\Notifier\Notifier.csproj" />
     <ProjectReference Include="..\..\Shared\Domain\Domain.csproj" />
     <ProjectReference Include="..\Core\Core.csproj" />
     <ProjectReference Include="..\UI\UI.csproj" />

@@ -8,6 +8,7 @@ namespace TempManager.Core.Services
     {
         private readonly Computer _computer;
         private IList<TMHardware> _activeHardware = new List<TMHardware>();
+        public IList<SensorReading> trackedSensors = new List<SensorReading>();
 
         public HardwareService()
         {

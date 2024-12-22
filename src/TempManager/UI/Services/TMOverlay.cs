@@ -3,6 +3,7 @@ using Coroutine;
 using ImGuiNET;
 using ClickableTransparentOverlay;
 using TempManager.Core.Services;
+using TempManager.Core.Interfaces;
 using TempManager.UI.Utilities;
 using Logger.Utilities;
 
@@ -10,9 +11,9 @@ namespace TempManager.UI.Services
 {
     public class TMOverlay : Overlay
     {
-        private readonly HardwareService _hardwareService;
-        private readonly MainRenderer _mainRenderer = new MainRenderer();
-        private readonly SelectableRenderer _selectableRenderer = new SelectableRenderer();
+        private readonly IHardwareService _hardwareService;
+        private readonly MainRenderer _mainRenderer;
+        private readonly SelectableRenderer _selectableRenderer;
 
         private readonly ActiveCoroutine _monitorUpdateCoroutine;
         private readonly double _hardwareUpdateDelay = 0.5;
@@ -21,13 +22,27 @@ namespace TempManager.UI.Services
         public TMOverlay() : base("TempManager", true, 3840, 2160)
         {
             _hardwareService = new HardwareService();
+            _mainRenderer = new MainRenderer();
+            _selectableRenderer = new SelectableRenderer();
             _monitorUpdateCoroutine = CoroutineHandler.Start(UpdateHardware(), name: "HardwareUpdateCoroutine");
-        }
-        public TMOverlay(HardwareService hardwareService) : base("TempManager", true, 3840, 2160)
+        } 
+        public TMOverlay(IHardwareService hardwareService) : base("TempManager", true, 3840, 2160)
         {
             _hardwareService = hardwareService;
+            _mainRenderer = new MainRenderer();
+            _selectableRenderer = new SelectableRenderer();
             _monitorUpdateCoroutine = CoroutineHandler.Start(UpdateHardware(), name: "HardwareUpdateCoroutine");
         }
+        private IEnumerable<Wait> UpdateHardware()
+        {
+            Log.Debug("UpdateHardware coroutine started");
+            while (this._isRunning)
+            {
+                this._hardwareService.Update().Wait();
+                yield return new Wait(this._hardwareUpdateDelay);
+            }
+        }
+
         protected override void Render()
         {
             CoroutineHandler.Tick(ImGui.GetIO().DeltaTime);
@@ -55,15 +70,6 @@ namespace TempManager.UI.Services
 
             ImGui.End();
 
-        }
-        private IEnumerable<Wait> UpdateHardware()
-        {
-            Log.Info("UpdateHardware coroutine started");
-            while (this._isRunning)
-            {
-                this._hardwareService.Update().Wait();
-                yield return new Wait(this._hardwareUpdateDelay);
-            }
         }
     }
 }

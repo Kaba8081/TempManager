@@ -19,6 +19,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UI", "src\TempManager\UI\UI
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logger", "src\Logger\Logger.csproj", "{EE6E5410-2172-4C32-8EFC-9750600BC7B9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Notifier", "src\Notifier\Notifier.csproj", "{AD787A00-51C1-4E9F-902A-D178ED3393FD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +47,10 @@ Global
 		{EE6E5410-2172-4C32-8EFC-9750600BC7B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EE6E5410-2172-4C32-8EFC-9750600BC7B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EE6E5410-2172-4C32-8EFC-9750600BC7B9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AD787A00-51C1-4E9F-902A-D178ED3393FD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AD787A00-51C1-4E9F-902A-D178ED3393FD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AD787A00-51C1-4E9F-902A-D178ED3393FD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AD787A00-51C1-4E9F-902A-D178ED3393FD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -57,6 +63,7 @@ Global
 		{0669D750-BE26-44BA-AB9F-EDF536B31421} = {62A99888-21B9-41A9-9484-D2F536DFFE7D}
 		{B4325C88-8509-4DDF-AB1F-72A5C18CF66C} = {62A99888-21B9-41A9-9484-D2F536DFFE7D}
 		{EE6E5410-2172-4C32-8EFC-9750600BC7B9} = {0100FF39-049A-4F70-80C8-895A9F852661}
+		{AD787A00-51C1-4E9F-902A-D178ED3393FD} = {0100FF39-049A-4F70-80C8-895A9F852661}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {EE8C8627-74A2-480F-A7AF-2EB48A8FB67B}

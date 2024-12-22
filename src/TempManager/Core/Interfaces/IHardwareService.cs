@@ -6,5 +6,6 @@ namespace TempManager.Core.Interfaces
     {
         Task Update();
         IList<TMHardware> GetHardwareComponents();
+        Dictionary<TMSensorType, List<TMSensor>> GetGroupedSensors(TMHardware hardware);
     }
 }
