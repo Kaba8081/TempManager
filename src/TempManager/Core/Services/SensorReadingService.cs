@@ -49,9 +49,11 @@ namespace TempManager.Core.Services
             return;
         }
 
-        public void UpdateTrackedSensors(IList<TMSensor> sensors) 
+        public void UpdateTrackedSensors() 
         {
-            // TODO: Implement this method
+            foreach (var sensor in _readings.Keys)
+                _readings[sensor].Data.Add((float)(sensor.Value ?? 0.0));
+
             return;
         }
     }

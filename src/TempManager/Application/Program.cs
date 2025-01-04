@@ -9,6 +9,7 @@ using TempManager.UI.Services;
 using TempManager.Core.Interfaces;
 using TempManager.Core.Services;
 using Domain.Models;
+using Coroutine;
 
 namespace TempManager.Application 
 {
@@ -17,6 +18,9 @@ namespace TempManager.Application
         private static IHardwareService _hardwareService;
         private static ISensorReadingService _sensorReadingService;
         private static TMOverlay _overlayService;
+
+        private static ActiveCoroutine _monitorUpdateCoroutine;
+        private static readonly double _hardwareUpdateDelay = 0.5;
 
         private static Task InitializeLogger(IServiceProvider serviceProvider)
         {
@@ -33,16 +37,30 @@ namespace TempManager.Application
         }
         private static Task RegisterEvents() 
         {
+
             if (_sensorReadingService != null) {
                 Notify.RegisterEvent("SelectedSensorsChange", (Action<IList<TMSensor>>)_sensorReadingService.CheckTrackedSensors);
-                Notify.RegisterEvent("SensorReadingUpdated", (Action<IList<TMSensor>>)_sensorReadingService.UpdateTrackedSensors);
+                Notify.RegisterEvent("HardwareUpdated", _sensorReadingService.UpdateTrackedSensors);
             }
             
             return Task.CompletedTask;
         }
+        private static IEnumerable<Wait> UpdateHardware()
+        {
+            Log.Debug("UpdateHardware coroutine started");
+            while (true)
+            {
+                _hardwareService.Update().Wait();
+                Notify.TriggerEvent("HardwareUpdated");
+
+                yield return new Wait(_hardwareUpdateDelay);
+            }
+        }
         private static Task InitializeHardwareService()
         {
             _hardwareService = new HardwareService();
+            _monitorUpdateCoroutine = CoroutineHandler.Start(UpdateHardware(), name: "HardwareUpdateCoroutine");
+
             Log.Debug("Hardware service started");
             return Task.CompletedTask;
         }

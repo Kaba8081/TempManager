@@ -23,7 +23,7 @@ namespace Notifier.Utilities
         }
         public static void TriggerEvent(string eventName, params object[]? args)
         {
-            Log.Debug($"{eventName} triggered with parameters: {args}");
+            // Log.Debug($"{eventName} triggered with parameters: {args}");
             _notifier?.TriggerEvent(eventName, args);
         }
     }

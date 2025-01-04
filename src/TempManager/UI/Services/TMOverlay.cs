@@ -15,8 +15,6 @@ namespace TempManager.UI.Services
         private readonly MainRenderer _mainRenderer;
         private readonly SelectableRenderer _selectableRenderer;
 
-        private readonly ActiveCoroutine _monitorUpdateCoroutine;
-        private readonly double _hardwareUpdateDelay = 0.5;
         private bool _isRunning = true;
 
         public TMOverlay() : base("TempManager", true, 3840, 2160)
@@ -24,23 +22,13 @@ namespace TempManager.UI.Services
             _hardwareService = new HardwareService();
             _mainRenderer = new MainRenderer();
             _selectableRenderer = new SelectableRenderer();
-            _monitorUpdateCoroutine = CoroutineHandler.Start(UpdateHardware(), name: "HardwareUpdateCoroutine");
+            
         } 
         public TMOverlay(IHardwareService hardwareService) : base("TempManager", true, 3840, 2160)
         {
             _hardwareService = hardwareService;
             _mainRenderer = new MainRenderer();
             _selectableRenderer = new SelectableRenderer();
-            _monitorUpdateCoroutine = CoroutineHandler.Start(UpdateHardware(), name: "HardwareUpdateCoroutine");
-        }
-        private IEnumerable<Wait> UpdateHardware()
-        {
-            Log.Debug("UpdateHardware coroutine started");
-            while (this._isRunning)
-            {
-                this._hardwareService.Update().Wait();
-                yield return new Wait(this._hardwareUpdateDelay);
-            }
         }
         protected override void Render()
         {
