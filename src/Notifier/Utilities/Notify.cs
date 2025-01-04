@@ -11,12 +11,12 @@ namespace Notifier.Utilities
         {
             _notifier = notifier ?? throw new ArgumentNullException(nameof(notifier));
         }
-        public static void RegisterEvent(string eventName, Action callback)
+        public static void RegisterEvent(string eventName, Delegate callback)
         {
             Log.Debug($"Registering event: {eventName}");
             _notifier?.RegisterEvent(eventName, callback);
         }
-        public static void UnRegisterEvent(string eventName, Action callback)
+        public static void UnRegisterEvent(string eventName, Delegate callback)
         {
             Log.Debug($"Unregister event: {eventName}");
             _notifier?.UnregisterEvent(eventName, callback);

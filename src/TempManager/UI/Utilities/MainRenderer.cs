@@ -8,21 +8,8 @@ namespace TempManager.UI.Utilities
 {
     public class MainRenderer
     {
-        private Dictionary<string, List<TMSensor>> _selectedValues;
-
         public Dictionary<TMSensor, LinePlotRenderer> plottedSensors { get; set; }
-        public Dictionary<string, List<TMSensor>> selectedValues
-        {
-            get => _selectedValues;
-            set
-            {
-                if (_selectedValues != value)
-                {
-                    _selectedValues = value;
-                    Notify.TriggerEvent("SelectedSensorsChanges");
-                }
-            }
-        }
+        public Dictionary<string, List<TMSensor>> selectedValues { get; set; }
 
         public MainRenderer()
         {
@@ -46,6 +33,8 @@ namespace TempManager.UI.Utilities
                 else 
                     selectedValues.Add(svIndex, new List<TMSensor> { sensor });
             }
+
+            Notify.TriggerEvent("SelectedSensorsChange", selectedValues.Values.SelectMany(x => x).ToList());
         }
         private void RenderSensorContextMenu(TMSensor sensor)
         {
@@ -135,11 +124,8 @@ namespace TempManager.UI.Utilities
 
             foreach (var node in clickedNode)
             {
-                if (selectedValues.ContainsKey(node.Key))
-                {
-                    selectedValues.Remove(node.Key);
-                }
-                else selectedValues.Add(node.Key, node.Value);
+                foreach (var value in node.Value)
+                    UpdateSelectedSensors(node.Key, value);
             }
         }
         public void RenderSensors(List<TMSensor> sensors)

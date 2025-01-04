@@ -8,6 +8,7 @@ using Notifier.Utilities;
 using TempManager.UI.Services;
 using TempManager.Core.Interfaces;
 using TempManager.Core.Services;
+using Domain.Models;
 
 namespace TempManager.Application 
 {
@@ -32,7 +33,11 @@ namespace TempManager.Application
         }
         private static Task RegisterEvents() 
         {
-            Notify.RegisterEvent("SensorReadingUpdated", _sensorReadingService?.UpdateTrackedSensors);
+            if (_sensorReadingService != null) {
+                Notify.RegisterEvent("SelectedSensorsChange", (Action<IList<TMSensor>>)_sensorReadingService.CheckTrackedSensors);
+                Notify.RegisterEvent("SensorReadingUpdated", (Action<IList<TMSensor>>)_sensorReadingService.UpdateTrackedSensors);
+            }
+            
             return Task.CompletedTask;
         }
         private static Task InitializeHardwareService()
@@ -58,6 +63,9 @@ namespace TempManager.Application
             await InitializeLogger(serviceProvider);
             await InitializeHardwareService();
             await InitializeEventService(serviceProvider);
+
+            _sensorReadingService = new SensorReadingService();
+            await RegisterEvents();
             RunOverlay();
 
             Log.Info("Application components started");

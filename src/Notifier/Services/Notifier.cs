@@ -7,6 +7,29 @@ namespace Notifier.Services
     {
         private readonly Dictionary<string, Delegate> _events = new();
 
+        private void ExecuteDelegate(string eventName, params object[]? args) 
+        {
+            var _eventDelegate = _events[eventName];
+
+            if (_eventDelegate is Action action && (args == null || args.Length == 0))
+            {
+                action.Invoke();
+            }
+            else if (_eventDelegate is Delegate del)
+            {
+                var paramTypes = del.Method.GetParameters().Select(p => p.ParameterType).ToArray();
+
+                if (paramTypes.Length == args?.Length)
+                    del.DynamicInvoke(args);
+                else
+                    Log.Error($"Invalid number of arguments for event: {eventName}");
+            }
+            else
+            {
+                Log.Error($"Unsupported delegate type for event: {eventName}. Expected Action or Action<T>.");
+            }
+        }
+
         public void RegisterEvent(string eventName, Delegate callback) 
         {
             if (_events.ContainsKey(eventName))
@@ -16,31 +39,29 @@ namespace Notifier.Services
             }
 
             _events[eventName] = callback;
+            return;
         }
         public void UnregisterEvent(string eventName, Delegate callback) 
         {
             if (_events.ContainsKey(eventName)) _events[eventName] = null;
+            return;
         }
-        public void TriggerEvent(string eventName, params object[] ?args)
+        public void TriggerEvent(string eventName, params object[]? args)
         {
             if (!_events.ContainsKey(eventName) || _events[eventName] == null)
             {
                 Log.Error($"No event wih id: {eventName}");
             }
 
-            else if (_events[eventName] is Action && args == null)
+            try {
+                ExecuteDelegate(eventName, args);
+            } 
+            catch (Exception ex)
             {
-                ((Action)_events[eventName]).Invoke();
+                Log.Error($"Error invoking event: {eventName} with args: {args} - {ex.Message}");
             }
-            else if (_events[eventName] is Action<object[]> ActionWithArguments)
-            {
-                if (args == null) Log.Warn($"{eventName} event missing required arguments!");
-                else ActionWithArguments.Invoke(args); 
-            }
-            else
-            {
-                Log.Error($"Uknown error occured trying to invoke: {eventName}");
-            }
+
+            return;
         }
     }
 }

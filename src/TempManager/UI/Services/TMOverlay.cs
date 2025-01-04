@@ -42,7 +42,6 @@ namespace TempManager.UI.Services
                 yield return new Wait(this._hardwareUpdateDelay);
             }
         }
-
         protected override void Render()
         {
             CoroutineHandler.Tick(ImGui.GetIO().DeltaTime);
