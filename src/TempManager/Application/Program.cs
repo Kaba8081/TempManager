@@ -22,29 +22,6 @@ namespace TempManager.Application
         private static ActiveCoroutine _monitorUpdateCoroutine;
         private static readonly double _hardwareUpdateDelay = 0.5;
 
-        private static Task InitializeLogger(IServiceProvider serviceProvider)
-        {
-            Log.Initialize(serviceProvider.GetRequiredService<ICustomLogger>());
-            Log.Debug("Logger initialized");
-
-            return Task.CompletedTask;
-        }
-        private static Task InitializeEventService(IServiceProvider serviceProvider)
-        {
-            Notify.Initialize(serviceProvider.GetRequiredService<INotifier>());
-            Log.Debug("Notifier initialized");
-            return Task.CompletedTask;
-        }
-        private static Task RegisterEvents() 
-        {
-
-            if (_sensorReadingService != null) {
-                Notify.RegisterEvent("SelectedSensorsChange", (Action<IList<TMSensor>>)_sensorReadingService.CheckTrackedSensors);
-                Notify.RegisterEvent("HardwareUpdated", _sensorReadingService.UpdateTrackedSensors);
-            }
-            
-            return Task.CompletedTask;
-        }
         private static IEnumerable<Wait> UpdateHardware()
         {
             Log.Debug("UpdateHardware coroutine started");
@@ -56,6 +33,42 @@ namespace TempManager.Application
                 yield return new Wait(_hardwareUpdateDelay);
             }
         }
+
+        private static async Task RunOverlay()
+        {
+            _overlayService = new TMOverlay(_hardwareService);
+            Log.Debug("Overlay started");
+            await _overlayService.Run();
+        }
+
+        #region InitializationMethonds
+
+        private static Task InitializeLogger(IServiceProvider serviceProvider)
+        {
+            Log.Initialize(serviceProvider.GetRequiredService<ICustomLogger>());
+            Log.Debug("Logger initialized");
+
+            return Task.CompletedTask;
+        }
+        
+        private static Task InitializeEventService(IServiceProvider serviceProvider)
+        {
+            Notify.Initialize(serviceProvider.GetRequiredService<INotifier>());
+            Log.Debug("Notifier initialized");
+            return Task.CompletedTask;
+        }
+        
+        private static Task RegisterEvents() 
+        {
+
+            if (_sensorReadingService != null) {
+                Notify.RegisterEvent("SelectedSensorsChange", (Action<IList<TMSensor>>)_sensorReadingService.CheckTrackedSensors);
+                Notify.RegisterEvent("HardwareUpdated", _sensorReadingService.UpdateTrackedSensors);
+            }
+            
+            return Task.CompletedTask;
+        }
+
         private static Task InitializeHardwareService()
         {
             _hardwareService = new HardwareService();
@@ -64,15 +77,13 @@ namespace TempManager.Application
             Log.Debug("Hardware service started");
             return Task.CompletedTask;
         }
-        private static async Task RunOverlay()
-        {
-            _overlayService = new TMOverlay(_hardwareService);
-            Log.Debug("Overlay started");
-            await _overlayService.Run();
-        }
+
+        #endregion
 
         static async Task Main(string[] args)
         {
+            AppDomain.CurrentDomain.ProcessExit += OnExit;
+
             var serviceProvider = new ServiceCollection()
                 .AddSingleton<ICustomLogger, CustomLogger>()
                 .AddSingleton<INotifier, CustomNotifier>()
@@ -87,6 +98,16 @@ namespace TempManager.Application
             RunOverlay();
 
             Log.Info("Application components started");
+        }
+
+        static void OnExit(object sender, EventArgs e) 
+        {
+            _overlayService.Close();
+            _monitorUpdateCoroutine.Cancel();
+            _sensorReadingService = null;
+            _hardwareService = null;
+
+            Log.Info("Application exiting");
         }
     }
 }
