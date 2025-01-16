@@ -2,7 +2,7 @@
 {
     public interface IFileWriter
     {
-        public void WriteData<T>(string path, T data);
-        public T? ReadData<T>(string path);
+        public Task WriteData<T>(string path, List<T> data);
+        public Task<List<T?>> ReadData<T>(string path);
     }
 }

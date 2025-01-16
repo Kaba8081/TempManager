@@ -5,7 +5,6 @@ using ClickableTransparentOverlay;
 using TempManager.Core.Services;
 using TempManager.Core.Interfaces;
 using TempManager.UI.Utilities;
-using Logger.Utilities;
 
 namespace TempManager.UI.Services
 {

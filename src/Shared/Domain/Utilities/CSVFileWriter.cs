@@ -4,15 +4,17 @@ namespace Domain.Utilities
 {
     internal class CSVFileWriter : IFileWriter
     {
-        public void WriteData<T>(string path, T Data) 
+        public Task WriteData<T>(string path, List<T> Data) 
         {
             // TODO: Implement
-            return;
+            
+            return Task.CompletedTask;
         }
-        public T ReadData<T>(string path)
+        public async Task<List<T>> ReadData<T>(string path)
         {
             // TODO: Implement
-            return default(T);
+            await Task.CompletedTask;
+            return [];
         }
     }
 }

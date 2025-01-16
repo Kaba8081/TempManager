@@ -8,12 +8,22 @@ namespace Domain.Services
     internal class FileHandler : IFileHandler
     {
         private readonly string _filePath = "";
+        private readonly string _defaultFileName = "results";
         private readonly FileFormat _fileFormat = FileFormat.csv;
         private IFileWriter _writer = new CSVFileWriter();
 
         private string _GetPath()
         { 
             return _filePath + _fileFormat.GetStringValue();
+        }
+
+        public FileHandler() 
+        {
+            _fileFormat = FileFormat.json;
+            _writer = new JSONFileWriter();
+
+            var _targetPath = Directory.GetCurrentDirectory();
+            _filePath = _targetPath + _defaultFileName + _fileFormat.ToString();
         }
 
         public FileHandler(string filePath)
