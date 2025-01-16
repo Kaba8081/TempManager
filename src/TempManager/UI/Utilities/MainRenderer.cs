@@ -73,6 +73,9 @@ namespace TempManager.UI.Utilities
                 ImGui.EndPopup();
             }
         }
+
+        #region RenderHardware
+
         public void RenderHardware(IHardwareService hardwareService)
         {
             foreach (var hardware in hardwareService.GetHardwareComponents())
@@ -137,5 +140,7 @@ namespace TempManager.UI.Utilities
             }
             ImGui.TreePop();
         }
+
+        #endregion
     }
 }

@@ -13,6 +13,8 @@ namespace TempManager.Core.Services
             _readings = new Dictionary<TMSensor, SensorReading>();
         }
 
+        #region UpdateTrackedSensors
+
         private void TrackSensor(TMSensor sensor) 
         {
             Log.Debug($"Tracking sensor: {sensor.Name}");
@@ -22,6 +24,7 @@ namespace TempManager.Core.Services
 
             return;
         }
+        
         private void UntrackSensor(TMSensor sensor) 
         {
             if (!_readings.ContainsKey(sensor)) return;
@@ -48,6 +51,8 @@ namespace TempManager.Core.Services
 
             return;
         }
+
+        #endregion
 
         public void UpdateTrackedSensors() 
         {
