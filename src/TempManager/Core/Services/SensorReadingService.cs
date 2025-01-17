@@ -28,7 +28,6 @@ namespace TempManager.Core.Services
 
             return;
         }
-        
         private void UntrackSensor(TMSensor sensor) 
         {
             if (!_readings.ContainsKey(sensor)) return;
@@ -38,7 +37,6 @@ namespace TempManager.Core.Services
 
             return;
         }
-
         public void CheckTrackedSensors(IList<TMSensor> new_sensors)
         {
             foreach (var sensor in new_sensors)
@@ -55,7 +53,6 @@ namespace TempManager.Core.Services
 
             return;
         }
-
         public void UpdateTrackedSensors() 
         {
             foreach (var sensor in _readings.Keys)
@@ -63,7 +60,6 @@ namespace TempManager.Core.Services
 
             return;
         }
-
         public Task SaveTrackedSensors() 
         {
             List<SensorReading> data = _readings.Values.ToList();

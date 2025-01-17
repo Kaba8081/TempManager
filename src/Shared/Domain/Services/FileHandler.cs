@@ -49,50 +49,50 @@ namespace Domain.Services
             }
         }
 
-        public bool SaveOptions(Dictionary<string, string> options)
-        {
-            // TODO: Implement
-            return false;
-        }
-        public Dictionary<string, string> ReadOptions()
-        {
-            // TODO: Implement
-            return new Dictionary<string, string> { };
-        }
         public async Task Save<T>(List<T> data, string fileName)
         {
             var path = _GetPath(fileName);
-            if (!File.Exists(path))
+            if (File.Exists(path))
             {
-                Log.Info("File at given path not found, creating ...");
-                try
-                {
-                    File.Create(path);
-                }
-                catch (Exception e)
-                {
-                    Log.Error($"Error creating file at path: {path}, ", e);
-                    return;
-                }
+                await _writer.WriteData(_GetPath(fileName), data);
+                Log.Info($"Succesfully saved data to {_GetPath(fileName)}");
 
-                Log.Info("File created successfully");
+                return;
             }
 
-            await _writer.WriteData(_GetPath(fileName), data);
-            Log.Info($"Succesfully saved data to {_GetPath(fileName)}");
+            Log.Info("File at given path not found, creating ...");
+            try
+            {
+                File.Create(path);
+                Log.Info("File created successfully");
+            }
+            catch (Exception e)
+            {
+                Log.Error($"Error creating file at path: {path}, ", e);   
+            }
 
             return;
         }
         public async Task<List<T>> Read<T>(string fileName)
         {
             var path = _GetPath(fileName);
+            var data = new List<T>();
+
             if (!File.Exists(path)) 
             {
                 Log.Warn($"File at path: {path} not found");
-                return new List<T>();
+                return data;
             }
 
-            List<T> data = await _writer.ReadData<T>(path);
+            try
+            {
+                data = await _writer.ReadData<T>(path);
+            }
+            catch (Exception e)
+            {
+                Log.Error($"An error occured while trying to read data at {path}", e);
+            }
+
             return data;
         }
     }
