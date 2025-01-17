@@ -14,11 +14,8 @@ namespace Domain.Utilities
             return;
         }
         public async Task<List<T>> ReadData<T>(string path) 
-        {
-            if (!File.Exists(path)) return new List<T>();
-            
+        {            
             await using FileStream stream = File.OpenRead(path);
-
             var file_data = await JsonSerializer.DeserializeAsync<List<T>>(stream);
             
             return file_data == null ? file_data : new List<T>();

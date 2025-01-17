@@ -1,5 +1,6 @@
 ﻿using TempManager.Core.Interfaces;
 using Domain.Models;
+using Domain.Services.Interfaces;
 using Logger.Utilities;
 
 namespace TempManager.Core.Services
@@ -7,13 +8,16 @@ namespace TempManager.Core.Services
     public class SensorReadingService : ISensorReadingService
     {
         private Dictionary<TMSensor, SensorReading> _readings;
+        private IFileHandler _fileHandler;
 
         public SensorReadingService() 
         {
             _readings = new Dictionary<TMSensor, SensorReading>();
         }
-
-        #region UpdateTrackedSensors
+        public SensorReadingService(IFileHandler fileHandler) : this()
+        {
+            _fileHandler = fileHandler;
+        }
 
         private void TrackSensor(TMSensor sensor) 
         {
@@ -52,14 +56,21 @@ namespace TempManager.Core.Services
             return;
         }
 
-        #endregion
-
         public void UpdateTrackedSensors() 
         {
             foreach (var sensor in _readings.Keys)
                 _readings[sensor].Data.Add((float)(sensor.Value ?? 0.0));
 
             return;
+        }
+
+        public Task SaveTrackedSensors() 
+        {
+            List<SensorReading> data = _readings.Values.ToList();
+            
+            _fileHandler?.Save(data, "saved_results");
+
+            return Task.CompletedTask;
         }
     }
 }

@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "Application": {
+      "commandName": "Project",
+      "commandLineArgs": "--save",
+      "workingDirectory": "D:\\programowanie\\c#\\TempManager"
+    }
+  }
+}

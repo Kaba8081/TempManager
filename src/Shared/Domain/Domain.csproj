@@ -10,4 +10,8 @@
     <PackageReference Include="LibreHardwareMonitorLib" Version="0.9.3" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\Logger\Logger.csproj" />
+  </ItemGroup>
+
 </Project>

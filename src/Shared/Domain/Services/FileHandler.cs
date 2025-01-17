@@ -2,19 +2,23 @@
 using Domain.Utilities.Interfaces;
 using Domain.Utilities;
 using Domain.Models;
+using Logger.Utilities;
 
 namespace Domain.Services
 {
-    internal class FileHandler : IFileHandler
+    public class FileHandler : IFileHandler
     {
         private readonly string _filePath = "";
-        private readonly string _defaultFileName = "results";
         private readonly FileFormat _fileFormat = FileFormat.csv;
         private IFileWriter _writer = new CSVFileWriter();
 
-        private string _GetPath()
-        { 
-            return _filePath + _fileFormat.GetStringValue();
+        private string _GetPath(string fileName)
+        {
+            string path = "";
+            path = Path.Combine(_filePath, fileName);
+            path += _fileFormat.GetStringValue();
+            
+            return path;
         }
 
         public FileHandler() 
@@ -22,8 +26,7 @@ namespace Domain.Services
             _fileFormat = FileFormat.json;
             _writer = new JSONFileWriter();
 
-            var _targetPath = Directory.GetCurrentDirectory();
-            _filePath = _targetPath + _defaultFileName + _fileFormat.ToString();
+            _filePath = Directory.GetCurrentDirectory();
         }
 
         public FileHandler(string filePath)
@@ -56,13 +59,41 @@ namespace Domain.Services
             // TODO: Implement
             return new Dictionary<string, string> { };
         }
-        public bool SaveResults()
+        public async Task Save<T>(List<T> data, string fileName)
         {
-            return false;
+            var path = _GetPath(fileName);
+            if (!File.Exists(path))
+            {
+                Log.Info("File at given path not found, creating ...");
+                try
+                {
+                    File.Create(path);
+                }
+                catch (Exception e)
+                {
+                    Log.Error($"Error creating file at path: {path}, ", e);
+                    return;
+                }
+
+                Log.Info("File created successfully");
+            }
+
+            await _writer.WriteData(_GetPath(fileName), data);
+            Log.Info($"Succesfully saved data to {_GetPath(fileName)}");
+
+            return;
         }
-        public bool ReadResults()
+        public async Task<List<T>> Read<T>(string fileName)
         {
-            return false;
+            var path = _GetPath(fileName);
+            if (!File.Exists(path)) 
+            {
+                Log.Warn($"File at path: {path} not found");
+                return new List<T>();
+            }
+
+            List<T> data = await _writer.ReadData<T>(path);
+            return data;
         }
     }
 }

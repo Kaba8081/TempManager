@@ -6,5 +6,6 @@ namespace TempManager.Core.Interfaces
     {
         public void CheckTrackedSensors(IList<TMSensor> new_sensors);
         public void UpdateTrackedSensors();
+        public Task SaveTrackedSensors();
     }
 }

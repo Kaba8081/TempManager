@@ -9,6 +9,8 @@ using TempManager.UI.Services;
 using TempManager.Core.Interfaces;
 using TempManager.Core.Services;
 using Domain.Models;
+using Domain.Services;
+using Domain.Services.Interfaces;
 using Coroutine;
 
 namespace TempManager.Application 
@@ -18,6 +20,7 @@ namespace TempManager.Application
         private static IHardwareService _hardwareService;
         private static ISensorReadingService _sensorReadingService;
         private static TMOverlay _overlayService;
+        private static IFileHandler _fileHandler;
 
         private static ActiveCoroutine _monitorUpdateCoroutine;
         private static readonly double _hardwareUpdateDelay = 0.5;
@@ -60,12 +63,14 @@ namespace TempManager.Application
         
         private static Task RegisterEvents() 
         {
+            int eventAmount = 0;
 
             if (_sensorReadingService != null) {
                 Notify.RegisterEvent("SelectedSensorsChange", (Action<IList<TMSensor>>)_sensorReadingService.CheckTrackedSensors);
                 Notify.RegisterEvent("HardwareUpdated", _sensorReadingService.UpdateTrackedSensors);
             }
-            
+
+            Log.Debug($"Finished registering {eventAmount} events");
             return Task.CompletedTask;
         }
 
@@ -75,6 +80,18 @@ namespace TempManager.Application
             _monitorUpdateCoroutine = CoroutineHandler.Start(UpdateHardware(), name: "HardwareUpdateCoroutine");
 
             Log.Debug("Hardware service started");
+            return Task.CompletedTask;
+        }
+
+        private static Task InitializeFileHandler() 
+        {
+            // FileHandler already initialized
+            if (_fileHandler != null) 
+                return Task.CompletedTask;
+
+            _fileHandler = new FileHandler();
+
+            Log.Debug("FileHandler initialized");
             return Task.CompletedTask;
         }
 
@@ -93,7 +110,13 @@ namespace TempManager.Application
             await InitializeHardwareService();
             await InitializeEventService(serviceProvider);
 
-            _sensorReadingService = new SensorReadingService();
+            if (args.Length > 0) 
+            {
+                if (args.Contains("--save"))
+                    await InitializeFileHandler();
+                    _sensorReadingService = new SensorReadingService(_fileHandler);
+            }
+
             await RegisterEvents();
             RunOverlay();
 
@@ -102,12 +125,14 @@ namespace TempManager.Application
 
         static void OnExit(object sender, EventArgs e) 
         {
+            _sensorReadingService?.SaveTrackedSensors();
+
             _overlayService.Close();
             _monitorUpdateCoroutine.Cancel();
             _sensorReadingService = null;
             _hardwareService = null;
 
-            Log.Info("Application exiting");
+            Log.Info("Application exiting ...");
         }
     }
 }

@@ -1,10 +1,10 @@
 ﻿namespace Domain.Services.Interfaces
 {
-    internal interface IFileHandler
+    public interface IFileHandler
     {
         bool SaveOptions(Dictionary<string, string> data);
         Dictionary<string, string> ReadOptions();
-        bool SaveResults();
-        bool ReadResults(); // TODO: Add Result type
+        Task Save<T>(List<T> data, string filePath);
+        Task<List<T>> Read<T>(string filePath);
     }
 }
