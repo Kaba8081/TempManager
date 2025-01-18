@@ -6,6 +6,7 @@ namespace Notifier.Services
     public class CustomNotifier : INotifier
     {
         private readonly Dictionary<string, Delegate> _events = new();
+        private List<string> _crashed_events = new();
 
         private void ExecuteDelegate(string eventName, params object[]? args) 
         {
@@ -28,6 +29,8 @@ namespace Notifier.Services
             {
                 Log.Error($"Unsupported delegate type for event: {eventName}. Expected Action or Action<T>.");
             }
+
+            return;
         }
 
         public void RegisterEvent(string eventName, Delegate callback) 
@@ -43,14 +46,21 @@ namespace Notifier.Services
         }
         public void UnregisterEvent(string eventName, Delegate callback) 
         {
-            if (_events.ContainsKey(eventName)) _events[eventName] = null;
+            if (_events.ContainsKey(eventName)) 
+                _events[eventName] = null;
+            
             return;
         }
         public void TriggerEvent(string eventName, params object[]? args)
         {
+            if (_crashed_events.Contains(eventName))
+                return;
+
             if (!_events.ContainsKey(eventName) || _events[eventName] == null)
             {
+                _crashed_events.Append(eventName);
                 Log.Error($"No event wih id: {eventName}");
+                return;
             }
 
             try {
@@ -58,7 +68,9 @@ namespace Notifier.Services
             } 
             catch (Exception ex)
             {
+                _crashed_events.Append(eventName);
                 Log.Error($"Error invoking event: {eventName} with args: {args} - {ex.Message}");
+                return;
             }
 
             return;
