@@ -19,14 +19,14 @@ namespace TempManager.UI.Services
         public TMOverlay() : base("TempManager", true, 3840, 2160)
         {
             _hardwareService = new HardwareService();
-            _mainRenderer = new MainRenderer();
+            _mainRenderer = new MainRenderer(_hardwareService);
             _selectableRenderer = new SelectableRenderer();
             
         } 
         public TMOverlay(IHardwareService hardwareService) : base("TempManager", true, 3840, 2160)
         {
             _hardwareService = hardwareService;
-            _mainRenderer = new MainRenderer();
+            _mainRenderer = new MainRenderer(_hardwareService);
             _selectableRenderer = new SelectableRenderer();
         }
         protected override void Render()
@@ -36,6 +36,7 @@ namespace TempManager.UI.Services
             bool isCollapsed = !ImGui.Begin(
                 "TempManager - Hardware and Sensors",
                 ref _isRunning,
+                ImGuiWindowFlags.MenuBar |
                 ImGuiWindowFlags.AlwaysAutoResize |
                 ImGuiWindowFlags.AlwaysVerticalScrollbar
                 );
@@ -47,7 +48,8 @@ namespace TempManager.UI.Services
                 return;
             }
 
-            _mainRenderer.RenderHardware(_hardwareService);
+            if (!isCollapsed)
+                _mainRenderer.Render();
 
             if (_mainRenderer.selectedValues.Count > 0)
             {

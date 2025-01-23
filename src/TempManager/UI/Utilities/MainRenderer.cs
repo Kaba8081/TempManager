@@ -8,11 +8,13 @@ namespace TempManager.UI.Utilities
 {
     public class MainRenderer
     {
+        private IHardwareService _hardwareService;
         public Dictionary<TMSensor, LinePlotRenderer> plottedSensors { get; set; }
         public Dictionary<string, List<TMSensor>> selectedValues { get; set; }
 
-        public MainRenderer()
+        public MainRenderer(IHardwareService hardwareService)
         {
+            _hardwareService = hardwareService;
             selectedValues = new Dictionary<string, List<TMSensor>>();
             plottedSensors = new Dictionary<TMSensor, LinePlotRenderer>();
         }
@@ -74,16 +76,68 @@ namespace TempManager.UI.Utilities
             }
         }
 
+        #region RenderMenu
+
+        public void RenderMenuPreferencesSection()
+        {
+            if (!ImGui.MenuItem("Preferences"))
+                return;
+
+            if (ImGui.MenuItem("File extension")) { }
+            if (ImGui.MenuItem("File path")) { }
+
+            ImGui.Separator();
+
+            if (ImGui.MenuItem("Theme")) { }
+
+            ImGui.EndMenu();
+        }
+        public void RenderMenuFileSection()
+        {
+            ImGui.Separator();
+
+            if (ImGui.MenuItem("Save", "CTRL + S")) { }
+            if (ImGui.MenuItem("Save As...")) { }
+            if (ImGui.MenuItem("Load", "CTRL + L")) { }
+
+            ImGui.Separator();
+
+            if (ImGui.MenuItem("Exit", "ALT + F4")) { }
+
+        }
+
+        public void RenderMainMenu()
+        {
+            // Render menu items
+            if (ImGui.BeginMenuBar())
+            {
+                if (ImGui.BeginMenu("File")) 
+                { 
+                    RenderMenuFileSection();           
+                    ImGui.EndMenu();                
+                }
+
+                if (ImGui.BeginMenu("Preferences")) 
+                {
+                    RenderMenuPreferencesSection();
+                    ImGui.EndMenu();
+                }
+
+                ImGui.EndMenuBar();
+            }
+        }
+        #endregion
+
         #region RenderHardware
 
-        public void RenderHardware(IHardwareService hardwareService)
+        public void RenderHardware()
         {
-            foreach (var hardware in hardwareService.GetHardwareComponents())
+            foreach (var hardware in _hardwareService.GetHardwareComponents())
             {
                 // TODO: Render hardware using ImGui.TreeNode()
                 if (ImGui.CollapsingHeader(hardware.Name))
                 {
-                    RenderSensorTypes(hardwareService.GetGroupedSensors(hardware), hardware.Name);
+                    RenderSensorTypes(_hardwareService.GetGroupedSensors(hardware), hardware.Name);
                 }
             }
         }
@@ -142,5 +196,12 @@ namespace TempManager.UI.Utilities
         }
 
         #endregion
+
+        public void Render() 
+        {
+            RenderMainMenu();
+
+            RenderHardware();
+        }
     }
 }
